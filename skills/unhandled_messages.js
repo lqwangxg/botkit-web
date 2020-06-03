@@ -29,8 +29,9 @@ module.exports = function(controller) {
             }
           }
         };
-        
-        bot.reply(message, JSON.stringify(jsonBody));
+        let bodyMsg = JSON.stringify(jsonBody);
+        console.log(`bodyMsg:${bodyMsg}`);
+        bot.reply(message, bodyMsg);
       }).catch((error) =>{
         console.log(error);
       });
