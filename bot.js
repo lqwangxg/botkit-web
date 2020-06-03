@@ -54,6 +54,19 @@ controller.openSocketServer(controller.httpserver);
 // Start the bot brain in motion!!
 controller.startTicking();
 
+
+const dialogflowMiddleware = require('botkit-middleware-dialogflow')(
+  {
+    keyFilename: './dialogflow-authkey.json',  // service account private key file from Google Cloud Console
+  }
+);
+controller.middleware.receive.use(dialogflowMiddleware.receive);
+
+controller.hears('hello','direct_message', function(bot, message) {
+  bot.reply(message,'Hello yourself!');
+});
+
+
 var normalizedPath = require("path").join(__dirname, "skills");
 require("fs").readdirSync(normalizedPath).forEach(function(file) {
   require("./skills/" + file)(controller);

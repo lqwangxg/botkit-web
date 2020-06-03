@@ -4,12 +4,13 @@ module.exports = function(webserver, controller) {
 
     debug('Configured /botkit/receive url');
     webserver.post('/botkit/receive', function(req, res) {
+      console.debug(`/receive req:${JSON.stringify(req)}`);
+  
+      // respond to Slack that the webhook has been received.
+      res.status(200);
 
-        // respond to Slack that the webhook has been received.
-        res.status(200);
-
-        // Now, pass the webhook into be processed
-        controller.handleWebhookPayload(req, res);
+      // Now, pass the webhook into be processed
+      controller.handleWebhookPayload(req, res);
 
     });
 
