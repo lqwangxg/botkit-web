@@ -29,7 +29,11 @@ module.exports = function(controller) {
           }
         }
       };
-      bot.reply(message, JSON.stringify(jsonBody));
+      msg = JSON.stringify(jsonBody);
+      console.debug(`jsonBody:${msg}`);
+      message.fulfillmentText = text ;
+      message.payload = jsonBody.payload;
+      bot.reply(message, msg);
       return; 
     }
 
