@@ -33,6 +33,7 @@ module.exports = function(controller) {
       console.debug(`jsonBody:${msg}`);
       message.fulfillmentText = text ;
       message.payload = jsonBody.payload;
+      console.debug(`message:${JSON.stringify(message)}`);
       bot.reply(message, msg);
       return; 
     }
