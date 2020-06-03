@@ -1,11 +1,14 @@
+const utils = require("../service/utils");
+
 module.exports = function(controller) {
 
   controller.on('message_received', function(bot, message) {
     let msg = JSON.stringify(message);
-    console.debug(`message:${msg}, action:${message.action}`);
-    if(message.action === "get-movie-info" ){
-      
-      const movie = movie_service.getDetail(context.confirmed.movie.toString());
+    const action = utils.getAction(message);
+    console.debug(`message:${msg}, action:${action}`);
+    if(action === "get-movie-info" ){
+      const params = utils.getParameters(message);
+      const movie = movie_service.getDetail(params.movie.toString());
       const text =`${movie.Title} is a ${movie.Actors} starer ${movie.Genre} movie, released in ${movie.Year}. It was directed by ${movie.Director}`;
       
       const jsonBody = { 
