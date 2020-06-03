@@ -12,18 +12,15 @@ Promise.promisifyAll(request);
 module.exports = class MovieService {
   
     static getDetail(movieTitle){
-        let url = encodeURI(URL_BASE + "&t="+ movieTitle);
-        let headers = {
-            "Content-Type": "application/json"
-        };
-        return request.getAsync({
-            url: url,
-            headers: headers,
+        const requestParam = {
+            url: encodeURI(URL_BASE + "&t="+ movieTitle),
+            headers: {"Content-Type": "application/json"},
             json: true
-        }).then(
-            (response) => {
+        };
+
+        return request.getAsync(requestParam).then((response) => {
                 if (response.statusCode != 200){
-                    return Promise.reject(new Error("MovieService.getDetail() failed."));
+                    return new Error("MovieService.getDetail() failed.");
                 }
                 return response.body;
             }
