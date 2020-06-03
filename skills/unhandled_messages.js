@@ -1,7 +1,8 @@
 module.exports = function(controller) {
 
   controller.on('message_received', function(bot, message) {
-    console.debug(`message:${message}`);
+    let msg = JSON.stringify(message);
+    console.debug(`message:${msg}, action:${message.action}`);
     if(message.action === "get-movie-info" ){
       
       const movie = movie_service.getDetail(context.confirmed.movie.toString());
@@ -24,7 +25,7 @@ module.exports = function(controller) {
           }
         }
       };
-      bot.reply(message, jsonBody);
+      bot.reply(message, JSON.stringify(jsonBody));
       return; 
     }
 
