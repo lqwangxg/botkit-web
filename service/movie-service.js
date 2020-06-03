@@ -3,14 +3,11 @@
 require("dotenv").config();
 
 const request = require('request');
-const debug = require("debug")("bot-express:service");
-
 const MOVIE_API_KEY = process.env.MOVIE_API_KEY;
 const URL_BASE = `http://www.omdbapi.com/?apikey=${MOVIE_API_KEY}`;
 
-Promise = require('bluebird');
-Promise.promisifyAll(request);
-
+//Promise = require('bluebird');
+//Promise.promisifyAll(request);
 
 module.exports = class MovieService {
 
