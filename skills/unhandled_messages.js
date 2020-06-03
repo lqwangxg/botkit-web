@@ -1,4 +1,5 @@
 const utils = require("../service/utils");
+const movie_service = require("../service/movie-service");
 
 module.exports = function(controller) {
 
