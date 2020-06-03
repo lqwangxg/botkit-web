@@ -1,9 +1,9 @@
 module.exports = function(controller) {
 
   controller.on('message_received', function(bot, message) {
-    console.debug(message);
+    console.debug(`message:${message}`);
     if(message.action === "get-movie-info" ){
-      controller.trigger();
+      
       const movie = movie_service.getDetail(context.confirmed.movie.toString());
       const text =`${movie.Title} is a ${movie.Actors} starer ${movie.Genre} movie, released in ${movie.Year}. It was directed by ${movie.Director}`;
       
