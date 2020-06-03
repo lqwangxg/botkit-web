@@ -21,6 +21,9 @@ env(__dirname + '/.env');
 
 var Botkit = require('botkit');
 var debug = require('debug')('botkit:main');
+const dialogflowMiddleware = require('botkit-middleware-dialogflow')({
+  keyFilename: './dialogflow-authkey.json',  // service account private key file from Google Cloud Console
+});
 
 var bot_options = {
     replyWithTyping: true,
@@ -38,6 +41,7 @@ if (process.env.MONGO_URI) {
 
 // Create the Botkit controller, which controls all instances of the bot.
 var controller = Botkit.socketbot(bot_options);
+controller.middleware.receive.use(dialogflowMiddleware.receive);
 
 // Set up an Express-powered webserver to expose oauth and webhook endpoints
 var webserver = require(__dirname + '/components/express_webserver.js')(controller);
@@ -53,6 +57,14 @@ controller.openSocketServer(controller.httpserver);
 
 // Start the bot brain in motion!!
 controller.startTicking();
+
+controller.handlers = [];
+var handlerPath = require("path").join(__dirname, "handler");
+require("fs").readdirSync(handlerPath).forEach(function(file) {
+  const module = require("./handler/" + file);
+  controller.handlers.push({action: file, module: module});
+  debug(`action:${file}, module:${module}`);
+});
 
 var normalizedPath = require("path").join(__dirname, "skills");
 require("fs").readdirSync(normalizedPath).forEach(function(file) {
