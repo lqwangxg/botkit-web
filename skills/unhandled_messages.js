@@ -12,26 +12,8 @@ module.exports = function(controller) {
       const movieTitle = params.movie.toString();
       movie_service.getDetail(movieTitle).then((movie)=>{
         const text =`${movie.Title} is a ${movie.Actors} starer ${movie.Genre} movie, released in ${movie.Year}. It was directed by ${movie.Director}`;
-        const jsonBody = { 
-          "fulfillmentText": text,
-          "payload": {
-            "google": {
-              "expectUserResponse": true,
-              "richResponse": {
-                "items": [
-                  {
-                    "simpleResponse": {
-                      "textToSpeech": text
-                    }
-                  }
-                ]
-              }
-            }
-          }
-        };
-        let bodyMsg = JSON.stringify(jsonBody);
-        console.log(`bodyMsg:${bodyMsg}`);
-        bot.reply(message, bodyMsg);
+        
+        bot.reply(message, text);
       }).catch((error) =>{
         console.log(error);
       });
