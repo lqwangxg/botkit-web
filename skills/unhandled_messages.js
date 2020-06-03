@@ -13,7 +13,16 @@ module.exports = function(controller) {
       movie_service.getDetail(movieTitle).then((movie)=>{
         const text =`${movie.Title} is a ${movie.Actors} starer ${movie.Genre} movie, released in ${movie.Year}. It was directed by ${movie.Director}`;
         
-        bot.reply(message, text);
+        bot.reply(message, {
+          text: text,
+          fulfillmentText: text,
+          fulfillmentMessages: [
+            {
+              text: {
+                text: [text]
+              }
+            }]
+        });
       }).catch((error) =>{
         console.log(error);
       });
