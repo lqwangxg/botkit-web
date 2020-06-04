@@ -10,42 +10,71 @@ module.exports = function(controller) {
       bot.startConversation(message, function(err, convo) {
 
         convo.say({
-          text: 'Hello human! I am brand new Botkit bot, ready to be customized to your needs!',
+          text: 'こんにちは、MBP SMARTEC ChatBotです。ご関心内容を選んでください。\n自由入力も可能です。',
           quick_replies: [
             {
-              title: 'Help',
+              title: '連絡方式',
+              payload: 'contact',
+            },
+            {
+              title: '関連団体',
+              payload: 'community',
+            },
+            {
+              title: '案例紹介',
+              payload: 'documentation',
+            },
+            {
+              title: 'Iot',
+              payload: 'iot',
+            },
+            {
+              title: 'ITサービス',
+              payload: 'ITService',
+            },
+            {
+              title: 'その他',
               payload: 'help',
             },
           ]
         });
 
-
       });
 
     }
 
-    controller.hears(['help','contact','documentation','docs','community'], 'message_received', function(bot, message) {
+    controller.hears(['help','iot','^IT\s*(サービス|Service)$','contact','documentation','docs','community'], 
+      'message_received', function(bot, message) {
 
       bot.startConversation(message, function(err, convo) {
-
+        //console.log(`convo:${JSON.stringify(convo)}`);
         // set up a menu thread which other threads can point at.
         convo.ask({
-          text: 'I can point you to resources, and connect you with experts who can help.',
+          text: '類別の選択、または直接入力してください',
           quick_replies: [
             {
-              title: 'Read the Docs',
+              title: '案例資料',
               payload: 'documentation',
             },
             {
-              title: 'Join the Community',
+              title: '関連団体',
               payload: 'community',
             },
             {
-              title: 'Expert Help',
+              title: 'ご連絡',
               payload: 'contact us',
             },
+            {
+              title: 'iot関連情報',
+              payload: 'iot',
+            },
+            {
+              title: 'ITサービス情報',
+              payload: 'ITService',
+            }
           ]
-        },[
+        },
+        [
           {
             pattern: 'documentation',
             callback: function(res, convo) {
@@ -68,6 +97,20 @@ module.exports = function(controller) {
             }
           },
           {
+            pattern: 'iot',
+            callback: function(res, convo) {
+              convo.gotoThread('iot');
+              convo.next();
+            }
+          },
+          {
+            pattern: 'ITService',
+            callback: function(res, convo) {
+              convo.gotoThread('ITService');
+              convo.next();
+            }
+          },
+          {
             default: true,
             callback: function(res, convo) {
               convo.gotoThread('end');
@@ -77,12 +120,12 @@ module.exports = function(controller) {
 
         // set up docs threads
         convo.addMessage({
-          text: 'I do not know how to help with that. Say `help` at any time to access this menu.'
+          text: 'helpを入力して、再度ご質問を聞かせてください。'
         },'end');
                 
         // set up docs threads
         convo.addMessage({
-          text: 'Botkit is extensively documented! Here are some useful links:\n\n[Botkit Studio Help Desk](https://botkit.groovehq.com/help_center)\n\n[Botkit Anywhere README](https://github.com/howdyai/botkit-starter-web/blob/master/readme.md#botkit-anywhere)\n\n[Botkit Developer Guide](https://github.com/howdyai/botkit/blob/master/readme.md#build-your-bot)',
+          text: '[総合案例資料 ](http://112.126.67.102:30006/news/)',
         },'docs');
 
         convo.addMessage({
@@ -92,30 +135,44 @@ module.exports = function(controller) {
 
         // set up community thread
         convo.addMessage({
-          text: 'Our developer community has thousands of members, and there are always friendly people available to answer questions about building bots!',
+          text: '[一般社団法人AI・IoT普及推進協会](https://www.aipa.jp/)',
         },'community');
 
         convo.addMessage({
-          text: '[Join our community Slack channel](https://community.botkit.ai) to chat live with the Botkit team, representatives from major messaging platforms, and other developers just like you!',
+          text: '[組み込みシステム技術協会](https://www.jasa.or.jp/tech/iotm2m/)',
         },'community');
 
         convo.addMessage({
-          text: '[Checkout the Github Issue Queue](https://github.com/howdyai/botkit/issues) to find frequently asked questions, bug reports and more.',
+          text: '[経済産業省、情報化・情報産業](https://www.meti.go.jp/policy/mono_info_service/joho/index.html)',
         },'community');
 
         convo.addMessage({
           action: 'default'
         }, 'community');
 
-
-
         // set up contact thread
         convo.addMessage({
-          text: 'The team who built me can help you build the perfect robotic assistant! They can answer all of your questions, and work with you to develop custom applications and integrations.\n\n[Use this form to get in touch](https://botkit.ai/contact.html), or email us directly at [help@botkit.ai](mailto:help@botkit.ai), and a real human will get in touch!',
+          text: '弊社の連絡方式：\n\n〒101‐0052\n 東京都千代田区神田小川町3－22　第三大丸ビル4階\n.TEL:03-6275-0950, FAX:03-6275-0951',
         },'contact');
         convo.addMessage({
           action: 'default'
         }, 'contact');
+
+        // set up IOT thread
+        convo.addMessage({
+          text: '[iot案例紹介](https://mono-wireless.com/jp/tech/Internet_of_Things.html)',
+        },'iot');
+        convo.addMessage({
+          action: 'default'
+        }, 'iot');
+
+        // set up ITService thread
+        convo.addMessage({
+          text: '[ITサービス案例紹介](http://mbpsmartec.co.jp/business/)',
+        },'ITService');
+        convo.addMessage({
+          action: 'default'
+        }, 'ITService');
 
       });
 

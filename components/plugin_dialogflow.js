@@ -12,8 +12,8 @@ module.exports = function(controller) {
  
   controller.middleware.receive.use(function(bot, message, next) {
     
-      intent.detectTextIntent(projectId, sessionId, [message.text], languageCode);
-      
+      //intent.detectTextIntent(projectId, sessionId, [message.text], languageCode);
+      next();
   });
 
 }

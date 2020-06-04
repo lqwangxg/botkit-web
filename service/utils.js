@@ -14,6 +14,12 @@ module.exports = class UtilsService {
     }
     return "";
   }
+  static getfulfillmentText(message){
+    if(message && message.queryResult && message.queryResult.fulfillmentText){
+      return message.queryResult.fulfillmentText;
+    }
+    return "";
+  }
   static getParameters(message){
     if(message && message.queryResult && message.queryResult.parameters){
       return message.queryResult.parameters;
@@ -27,9 +33,30 @@ module.exports = class UtilsService {
     return [];
   }
   static getParameterValue(message, paramName){
-    let parameters = getParameters(message);
+    let parameters = UtilsService.getParameters(message);
     if(parameters[paramName]){
       return parameters[paramName]; 
+    }
+    let midParam = parameters[paramName];  
+    if(typeof(midParam) ==="string"){
+      return midParam;
+    }
+
+    if(parameters.fields && parameters.fields[paramName]){
+      midParam = parameters.fields[paramName];
+    }
+    if(typeof(midParam) === "string"){
+      return midParam;
+    }
+
+    if(midParam.listValue 
+      && midParam.listValue.values)
+    {
+      midParam = midParam.listValue.values;
+    }
+
+    if(midParam && midParam[0].stringValue){
+      return midParam[0].stringValue;
     }
     return null;
   }

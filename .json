@@ -1,98 +1,102 @@
 {
-  "responseId": "f5fdf765-2e09-4918-a880-1e00f03947c6-b4a98e7e",
-  "queryResult": {
-    "queryText": "tell me about who am i",
-    "action": "get-movie-info",
-    "parameters": {
-      "movie": [
-        "Who am I"
-      ]
-    },
-    "allRequiredParamsPresent": true,
-    "fulfillmentMessages": [
-      {
-        "text": {
-          "text": [
-            ""
-          ]
-        }
-      }
-    ],
-    "outputContexts": [
-      {
-        "name": "projects/newagent-aoqmyn/agent/sessions/dfMessenger-83684442/contexts/__system_counters__",
-        "parameters": {
-          "no-input": 0,
-          "no-match": 0,
-          "movie": [
-            "Who am I"
-          ],
-          "movie.original": [
-            "who am i"
-          ]
-        }
-      }
-    ],
-    "intent": {
-      "name": "projects/newagent-aoqmyn/agent/intents/c02dbfff-84f7-4745-bd1c-7c13777b229b",
-      "displayName": "movie-intent"
-    },
-    "intentDetectionConfidence": 1,
-    "languageCode": "ja"
-  },
-  "originalDetectIntentRequest": {
-    "payload": {}
-  },
-  "session": "projects/newagent-aoqmyn/agent/sessions/dfMessenger-83684442",
+  "type": "message_received",
+  "text": "tell me about who am i",
+  "user": "7f11bbdc-7e6c-8312-c057-b4080304575f",
+  "channel": "socket",
   "raw_message": {
-    "responseId": "f5fdf765-2e09-4918-a880-1e00f03947c6-b4a98e7e",
-    "queryResult": {
-      "queryText": "tell me about who am i",
-      "action": "get-movie-info",
-      "parameters": {
-        "movie": [
-          "Who am I"
-        ]
-      },
-      "allRequiredParamsPresent": true,
-      "fulfillmentMessages": [
-        {
-          "text": {
-            "text": [
-              ""
-            ]
-          }
-        }
-      ],
-      "outputContexts": [
-        {
-          "name": "projects/newagent-aoqmyn/agent/sessions/dfMessenger-83684442/contexts/__system_counters__",
-          "parameters": {
-            "no-input": 0,
-            "no-match": 0,
-            "movie": [
-              "Who am I"
-            ],
-            "movie.original": [
-              "who am i"
-            ]
-          }
-        }
-      ],
-      "intent": {
-        "name": "projects/newagent-aoqmyn/agent/intents/c02dbfff-84f7-4745-bd1c-7c13777b229b",
-        "displayName": "movie-intent"
-      },
-      "intentDetectionConfidence": 1,
-      "languageCode": "ja"
-    },
-    "originalDetectIntentRequest": {
-      "payload": {}
-    },
-    "session": "projects/newagent-aoqmyn/agent/sessions/dfMessenger-83684442"
+    "type": "message",
+    "text": "tell me about who am i",
+    "user": "7f11bbdc-7e6c-8312-c057-b4080304575f",
+    "channel": "socket"
+  },
+  "_pipeline": {
+    "stage": "receive"
+  }
+}
+{
+  "type": "message_received",
+  "text": "tell me about who am i",
+  "user": "7f11bbdc-7e6c-8312-c057-b4080304575f",
+  "channel": "socket",
+  "raw_message": {
+    "type": "message",
+    "text": "tell me about who am i",
+    "user": "7f11bbdc-7e6c-8312-c057-b4080304575f",
+    "channel": "socket"
   },
   "_pipeline": {
     "stage": "receive"
   },
-  "type": "message_received"
-} 
+  "responseId": "fb2f6fcb-47c3-4769-a2be-71a1f98e76eb-b4a98e7e",
+  "queryResult": {
+    "fulfillmentMessages": [
+      {
+        "platform": "PLATFORM_UNSPECIFIED",
+        "text": {
+          "text": [
+            ""
+          ]
+        },
+        "message": "text"
+      }
+    ],
+    "outputContexts": [],
+    "queryText": "tell me about who am i",
+    "speechRecognitionConfidence": 0,
+    "action": "get-movie-info",
+    "parameters": {
+      "fields": {
+        "movie": {
+          "listValue": {
+            "values": [
+              {
+                "stringValue": "Who am I",
+                "kind": "stringValue"
+              }
+            ]
+          },
+          "kind": "listValue"
+        }
+      }
+    },
+    "allRequiredParamsPresent": true,
+    "fulfillmentText": "",
+    "webhookSource": "",
+    "webhookPayload": null,
+    "intent": {
+      "inputContextNames": [],
+      "events": [],
+      "trainingPhrases": [],
+      "outputContexts": [],
+      "parameters": [],
+      "messages": [],
+      "defaultResponsePlatforms": [],
+      "followupIntentInfo": [],
+      "name": "projects/newagent-aoqmyn/agent/intents/c02dbfff-84f7-4745-bd1c-7c13777b229b",
+      "displayName": "movie-intent",
+      "priority": 0,
+      "isFallback": false,
+      "webhookState": "WEBHOOK_STATE_UNSPECIFIED",
+      "action": "",
+      "resetContexts": false,
+      "rootFollowupIntentName": "",
+      "parentFollowupIntentName": "",
+      "mlDisabled": false
+    },
+    "intentDetectionConfidence": 1,
+    "diagnosticInfo": {
+      "fields": {
+        "webhook_latency_ms": {
+          "numberValue": 2165,
+          "kind": "numberValue"
+        }
+      }
+    },
+    "languageCode": "ja"
+  },
+  "webhookStatus": {
+    "details": [],
+    "code": 0,
+    "message": "Webhook execution successful"
+  }
+}
