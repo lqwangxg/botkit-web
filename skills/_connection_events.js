@@ -4,135 +4,102 @@ module.exports = function(controller) {
 
     controller.on('hello', conductOnboarding);
     controller.on('welcome_back', conductOnboarding);
-
+    
     function conductOnboarding(bot, message) {
 
       bot.startConversation(message, function(err, convo) {
-
-        convo.say({
-          text: 'こんにちは、MBP SMARTEC ChatBotです。ご関心内容を選んでください。\n自由入力も可能です。',
-          quick_replies: [
-            {
-              title: '連絡方式',
-              payload: 'contact',
-            },
-            {
-              title: '関連団体',
-              payload: 'community',
-            },
-            {
-              title: '案例紹介',
-              payload: 'documentation',
-            },
-            {
-              title: 'Iot',
-              payload: 'iot',
-            },
-            {
-              title: 'ITサービス',
-              payload: 'ITService',
-            },
-            {
-              title: 'その他',
-              payload: 'help',
-            },
-          ]
-        });
-
+        const header='こんにちは、MBP Smartec ロボです。 ';
+        helpDesk(convo, header);
       });
 
     }
+    
+    function helpDesk(convo, headText){
+      let typingDelay = 0;
+      if(!headText){
+        headText="他に";
+        typingDelay = 5000;
+      }
+      convo.say({
+        text: `${headText}お問い合わせ内容をどうぞ`,
+        typingDelay: typingDelay,
+        quick_replies: [
+          {
+            title: 'iot関連',
+            payload: 'iot関連',
+          },
+          {
+            title: 'bigdata関連',
+            payload: 'bigdata関連',
+          },
+          {
+            title: '会社案内',
+            payload: '会社案内',
+          },{
+            title: '事業内容',
+            payload: '事業内容',
+          },{
+            title: '最新ニュース',
+            payload: '最新ニュース',
+          }
+        ]
+      });
+    }
 
-    controller.hears(['help','iot','^IT\s*(サービス|Service)$','contact','documentation','docs','community'], 
-      'message_received', function(bot, message) {
+    controller.hears('iot', 'message_received', function(bot, message) {
 
       bot.startConversation(message, function(err, convo) {
-        //console.log(`convo:${JSON.stringify(convo)}`);
+                //console.log(`convo:${JSON.stringify(convo)}`);
         // set up a menu thread which other threads can point at.
         convo.ask({
-          text: '類別の選択、または直接入力してください',
+          text: 'iot関連情報を選べます。',
           quick_replies: [
             {
-              title: '案例資料',
-              payload: 'documentation',
+              title: 'iot案例資料',
+              payload: 'iot案例資料',
             },
             {
-              title: '関連団体',
-              payload: 'community',
-            },
-            {
-              title: 'ご連絡',
-              payload: 'contact us',
-            },
-            {
-              title: 'iot関連情報',
-              payload: 'iot',
-            },
-            {
-              title: 'ITサービス情報',
-              payload: 'ITService',
+              title: 'iot関連団体',
+              payload: 'iot関連団体',
+            },{ 
+              title: 'その他',
+              payload: 'その他',
             }
           ]
         },
         [
           {
-            pattern: 'documentation',
+            pattern: 'iot案例資料',
             callback: function(res, convo) {
               convo.gotoThread('docs');
               convo.next();
             }
           },
           {
-            pattern: 'community',
+            pattern: 'iot関連団体',
             callback: function(res, convo) {
               convo.gotoThread('community');
               convo.next();
             }
           },
           {
-            pattern: 'contact',
-            callback: function(res, convo) {
-              convo.gotoThread('contact');
-              convo.next();
-            }
-          },
-          {
-            pattern: 'iot',
-            callback: function(res, convo) {
-              convo.gotoThread('iot');
-              convo.next();
-            }
-          },
-          {
-            pattern: 'ITService',
-            callback: function(res, convo) {
-              convo.gotoThread('ITService');
-              convo.next();
-            }
-          },
-          {
             default: true,
             callback: function(res, convo) {
-              convo.gotoThread('end');
+              //convo.gotoThread('end');
+              convo.next();
             }
           }
         ]);
 
         // set up docs threads
         convo.addMessage({
-          text: 'helpを入力して、再度ご質問を聞かせてください。'
-        },'end');
-                
-        // set up docs threads
-        convo.addMessage({
-          text: '[総合案例資料 ](http://112.126.67.102:30006/news/)',
+          text: '[Iot案例資料 ](http://112.126.67.102:30006/news/)',
         },'docs');
-
+        
         convo.addMessage({
           action: 'default'
         }, 'docs');
-
-
+        
         // set up community thread
         convo.addMessage({
           text: '[一般社団法人AI・IoT普及推進協会](https://www.aipa.jp/)',
@@ -149,34 +116,42 @@ module.exports = function(controller) {
         convo.addMessage({
           action: 'default'
         }, 'community');
-
-        // set up contact thread
-        convo.addMessage({
-          text: '弊社の連絡方式：\n\n〒101‐0052\n 東京都千代田区神田小川町3－22　第三大丸ビル4階\n.TEL:03-6275-0950, FAX:03-6275-0951',
-        },'contact');
-        convo.addMessage({
-          action: 'default'
-        }, 'contact');
-
-        // set up IOT thread
-        convo.addMessage({
-          text: '[iot案例紹介](https://mono-wireless.com/jp/tech/Internet_of_Things.html)',
-        },'iot');
-        convo.addMessage({
-          action: 'default'
-        }, 'iot');
-
-        // set up ITService thread
-        convo.addMessage({
-          text: '[ITサービス案例紹介](http://mbpsmartec.co.jp/business/)',
-        },'ITService');
-        convo.addMessage({
-          action: 'default'
-        }, 'ITService');
-
+           
+        helpDesk(convo);
       });
-
+      
+    });
+    
+    controller.hears(['help','ヘルプ'], 'message_received', function(bot, message) {
+      conductOnboarding(bot, message);
     });
 
+    controller.hears(['会社案内','電話番号','所在地','アクセス'], 'message_received', function(bot, message) {
+      bot.startConversation(message, function(err, convo) {
+        // set up community thread
+        convo.say({
+          text: '[弊社の会社案内](http://mbpsmartec.co.jp/company/)',
+        });
+        helpDesk(convo);
+      });
+    });
+    controller.hears('事業内容', 'message_received', function(bot, message) {
+      bot.startConversation(message, function(err, convo) {
+        // set up community thread
+        convo.say({
+          text: '[弊社の事業内容紹介へ](http://mbpsmartec.co.jp/business/)',
+        });
+        helpDesk(convo);
+      });
+    });
+    controller.hears('最新ニュース', 'message_received', function(bot, message) {
+      bot.startConversation(message, function(err, convo) {
+        // set up community thread
+        convo.say({
+          text: '[弊社の最新ニュース](http://mbpsmartec.co.jp/news/)',
+        });
+        helpDesk(convo);
+      });
+    });
 
 }

@@ -8,7 +8,7 @@
         max_reconnect: 5
       },
       options: {
-        sound: false,
+        sound: false,// true will play sound on received a message.
         use_sockets: true
       },
       reconnect_count: 0,
@@ -55,23 +55,28 @@
 
       },
       send: function(text, e) {
-	var that = this;
+	      var that = this;
         if (e) e.preventDefault();
         if (!text) {
           return;
         }
+        console.log(`send text: ${text}`);
+        //送信者は誰？
+        const user = this.guid;
         var message = {
-          type: 'outgoing',
-          text: text
+          type: 'outgoing', //右寄せ表示, default　incoming左寄せ
+          user: user,
+          text: text,
         };
 
         this.clearReplies();
+        //show in webclient contentContainer.
         that.renderMessage(message);
-
+        // send to chat server.
         that.deliverMessage({
           type: 'message',
           text: text,
-          user: this.guid,
+          user: user,
           channel: this.options.use_sockets ? 'socket' : 'webhook'
         });
 
@@ -87,6 +92,7 @@
         } else {
           this.webhook(message);
         }
+        console.log(`deliverMessage user_profile:${message.user_profile},user:${message.user}`);
       },
       getHistory: function(guid) {
         var that = this;
@@ -230,8 +236,28 @@
           that.message_list.appendChild(that.next_line);
         }
         if (message.text) {
-          message.html = converter.makeHtml(message.text);
+          var messageIntent ;
+          var username;
+          if(message.user != this.guid){
+            username = message.user;
+          }else
+          {
+            username = "匿名客(" + message.user+")";
+          }
+          const options = { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric' };
+          const nowDate = new Date();
+          const nowString = nowDate.toLocaleDateString() + " " + nowDate.toLocaleTimeString();
+
+          if(message.text && message.user){
+            if(message.type==="outgoing"){
+              messageIntent = "<div class='guest'>"+ nowString+ " " + username + ":</div>";
+            }else{
+              messageIntent = "<p class='chatbot'>" + nowString + " ChatBot:</p>";
+            }
+          }
+          message.html = messageIntent + converter.makeHtml(message.text);
         }
+        console.log('html:', message.html);
 
         that.next_line.innerHTML = that.message_template({
           message: message

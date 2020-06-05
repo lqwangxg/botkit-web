@@ -63,7 +63,7 @@ var Botkit = {
         console.log('Embedded Botkit: Ready!');
         break;
       case 'connected':
-        // console.log('100% CONNECTED AND READY TO GO');
+        console.log('100% CONNECTED AND READY TO GO');
         break;
     }
   },
@@ -101,6 +101,7 @@ var Botkit = {
     if (user) {
       that.current_user = user;
     }
+    console.log(`boot current_user:${that.current_user}`);
 
     if (!that.chatClient) {
       console.error('Cannot find Botkit chat client iframe. Make sure your iframe has the id #botkit_client');

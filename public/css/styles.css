@@ -204,8 +204,8 @@ a.button {
     margin-bottom: 0; }
   #message_window .message.outgoing {
     float: right;
-    background: #a795ef;
-    color: white; }
+    background: #FFFFCC;
+     }
   #message_window #message_replies {
     text-align: center;
     overflow-x: auto;
@@ -243,7 +243,7 @@ a.button {
     width: 5px;
     float: left;
     margin: 0 1px;
-    background-color: #333;
+    background-color: #33F;
     display: block;
     border-radius: 50%;
     opacity: 0.4; }
@@ -282,3 +282,14 @@ a.button {
   margin-left: 440px; }
 
 /*# sourceMappingURL=styles.css.map */
+
+.guest{
+  color: blue;
+  font-size: 8px;
+  font-weight: bolder;
+}
+.chatbot{
+  color: blue;
+  font-size: 8px;
+  font-weight: bolder;
+}
