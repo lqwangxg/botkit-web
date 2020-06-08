@@ -60,4 +60,40 @@ module.exports = class UtilsService {
     }
     return null;
   }
+
+  
+  static helpDesk(convo, headText){
+    let typingDelay = 0;
+    if(!headText){
+      headText="他に";
+      typingDelay = 5000;
+    }
+    convo.say({
+      text: `${headText}お問い合わせ内容をどうぞ`,
+      typingDelay: typingDelay,
+      quick_replies: [
+        {
+          title: 'iot関連',
+          payload: 'iot関連',
+        },
+        {
+          title: 'bigdata関連',
+          payload: 'bigdata関連',
+        },
+        {
+          title: '会社案内',
+          payload: '会社案内',
+        },{
+          title: '事業内容',
+          payload: '事業内容',
+        },{
+          title: '最新ニュース',
+          payload: '最新ニュース',
+        },{
+          title: 'ログイン',
+          payload: 'ログイン',
+        }
+      ]
+    });
+  }
 }

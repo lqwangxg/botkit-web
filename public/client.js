@@ -62,26 +62,29 @@
         }
         console.log(`send text: ${text}`);
         //送信者は誰？
-        const user = this.guid;
+        console.log(`送信者：`,that.current_user);
+
         var message = {
           type: 'outgoing', //右寄せ表示, default　incoming左寄せ
-          user: user,
+          user: that.current_user,
           text: text,
         };
-
+        
         this.clearReplies();
         //show in webclient contentContainer.
+        console.log(`Clientへ送信内容：`, message);
         that.renderMessage(message);
-        // send to chat server.
-        that.deliverMessage({
+        var message_s={
           type: 'message',
           text: text,
-          user: user,
+          user: that.current_user,
           channel: this.options.use_sockets ? 'socket' : 'webhook'
-        });
+        }
+        console.log(`Serverへ送信内容：`, message_s);
+        // send to chat server.
+        that.deliverMessage(message_s);
 
         this.input.value = '';
-
         this.trigger('sent', message);
 
         return false;
@@ -92,13 +95,13 @@
         } else {
           this.webhook(message);
         }
-        console.log(`deliverMessage user_profile:${message.user_profile},user:${message.user}`);
+        console.log(`deliverMessage`, message);
       },
-      getHistory: function(guid) {
+      getHistory: function() {
         var that = this;
-        if (that.guid) {
+        if (that.current_user) {
           that.request('/botkit/history', {
-            user: that.guid
+            user: that.current_user
           }).then(function(history) {
             if (history.success) {
               that.trigger('history_loaded', history.history);
@@ -121,17 +124,30 @@
 
       },
       connect: function(user) {
-
+        console.log('connect user:', user);
         var that = this;
-
-        if (user && user.id) {
-          Botkit.setCookie('botkit_guid', user.id, 1);
-
-          user.timezone_offset = new Date().getTimezoneOffset();
-          that.current_user = user;
-          console.log('CONNECT WITH USER', user);
+        if (!user) {
+          user = {
+            id: Math.random().toString().substr(2,10)
+          }
         }
+        user.timezone_offset = new Date().getTimezoneOffset();
+        that.current_user = user;
 
+        console.log('connect usertypeof:', typeof user);
+        if(user.id){
+          userid = user.id;
+        }else if(typeof user === "string"){
+          console.log('connect usertypeof:', typeof user);
+          user.id = user;
+        }else{
+          user.id = Math.random().toString().substr(2,10)
+        }
+        
+        const cookieID = 'botkit_userid_'+ user.id;
+        Botkit.setCookie(cookieID, user.id, 1);
+        console.log('connect cookieid:', cookieID);
+        console.log('CONNECT WITH USER:', user);
         // connect to the chat server!
         if (that.options.use_sockets) {
           that.connectWebsocket(that.config.ws_url);
@@ -156,7 +172,7 @@
         that.trigger('connected', {});
         that.webhook({
           type: connectEvent,
-          user: that.guid,
+          user: that.current_user,
           channel: 'webhook',
         });
 
@@ -165,15 +181,23 @@
         var that = this;
         // Create WebSocket connection.
         that.socket = new WebSocket(ws_url);
+        console.log(`hello, connect to server......`);
 
         var connectEvent = 'hello';
-        if (Botkit.getCookie('botkit_guid')) {
-          that.guid = Botkit.getCookie('botkit_guid');
-          connectEvent = 'welcome_back';
-        } else {
-          that.guid = that.generate_guid();
-          Botkit.setCookie('botkit_guid', that.guid, 1);
+        var cookieID ="";
+        if(that.current_user && that.current_user.id){
+          cookieID = 'botkit_userid_'+ that.current_user.id;
         }
+        console.log('connectWebsocket by======== cookieID:',cookieID);
+
+        if (Botkit.getCookie(cookieID)) {
+          that.guid = Botkit.getCookie(cookieID);
+          connectEvent = 'welcome_back';
+        //} else {
+        //  that.guid = that.generate_guid();
+        //  Botkit.setCookie('botkit_guid', that.guid, 1);
+        }
+         
 
         that.getHistory();
 
@@ -184,11 +208,12 @@
           that.trigger('connected', event);
           that.deliverMessage({
             type: connectEvent,
-            user: that.guid,
-            channel: 'socket',
-            user_profile: that.current_user ? that.current_user : null,
+            user: that.current_user,
+            channel: 'socket'
           });
         });
+        console.log('connectWebsocket user_profile:', that.current_user);
+
 
         that.socket.addEventListener('error', function(event) {
           console.error('ERROR', event);
@@ -238,17 +263,24 @@
         if (message.text) {
           var messageIntent ;
           var username;
-          if(message.user != this.guid){
-            username = message.user;
+          if(message.user){
+            if(message.user.name ){
+              username = message.user.name;
+            }else if(message.user.id ){
+              username = message.user.id;
+            }
+            else{
+              username = "匿名客-001";
+            }
           }else
           {
-            username = "匿名客(" + message.user+")";
+            username = "匿名客-999";
           }
           const options = { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric' };
           const nowDate = new Date();
           const nowString = nowDate.toLocaleDateString() + " " + nowDate.toLocaleTimeString();
 
-          if(message.text && message.user){
+          if(message.text){
             if(message.type==="outgoing"){
               messageIntent = "<div class='guest'>"+ nowString+ " " + username + ":</div>";
             }else{
@@ -292,6 +324,7 @@
         });
       },
       receiveCommand: function(event) {
+        console.log(`receiveCommand event:`, event);
         switch (event.data.name) {
           case 'trigger':
             // tell Botkit to trigger a specific script/thread
@@ -304,6 +337,7 @@
             Botkit.identifyUser(event.data.user);
             break;
           case 'connect':
+            console.log(`receiveCommand on connect to :` + event.data.user);
             // link this account info to this user
             Botkit.connect(event.data.user);
             break;
@@ -345,8 +379,9 @@
             .toString(16)
             .substring(1);
         }
-        return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
-          s4() + '-' + s4() + s4() + s4();
+        //return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+        //  s4() + '-' + s4() + s4() + s4();
+        return s4() + s4() 
       },
       boot: function(user) {
 
