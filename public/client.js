@@ -270,7 +270,7 @@
               username = message.user.id;
             }
             else{
-              username = "匿名客-001";
+              username = message.user;
             }
           }else
           {
@@ -540,7 +540,19 @@
 
 
     (function() {
+      var user = {};
+      var roles = document.getElementsByName('role');
+      if(roles && roles.length >0 ){
+        var role = roles[0].content;
+        user = {
+          id: role,
+          name: role,
+          role: role
+        }
+        console.log('role:', role);
+      }
+      
       // your page initialization code here
       // the DOM will be available here
-      Botkit.boot();
+      Botkit.boot(user);
     })();

@@ -8,12 +8,19 @@ module.exports = function(controller) {
   controller.hears(['help','ヘルプ'], 'message_received', onboarding);
 
   function onboarding(bot, message) {
-    console.log('onboarding ================> message:', message);
+    console.log(`onboarding :${message.type}, ${message.user.id} `);
+    controller.trigger('broadcast', [bot, message]);
 
     bot.startConversation(message, function(err, convo) {
       const header='こんにちは、MBP Smartec ロボです。 ';
       utils.helpDesk(convo, header);
     });
+  }
+
+  controller.on(['broadcast'], onBroadcasting);
+  function onBroadcasting(bot, message) {
+    console.log(`onBroadcasting :${message.type}, ${message.user.id} `);
+    
   }
   
 }

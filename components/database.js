@@ -1,12 +1,14 @@
+require("dotenv").config();
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var ObjectId = mongoose.Schema.Types.ObjectId;
 var debug = require('debug')('botkit:db');
 module.exports = function(config) {
 
+  console.log('process.env.MONGO_URI:', process.env.MONGO_URI);
 
   mongoose.connect(process.env.MONGO_URI, {
-    useMongoClient: true
+    useUnifiedTopology: true
   });
 
   mongoose.Promise = global.Promise;
@@ -16,6 +18,7 @@ module.exports = function(config) {
   db.once('open', function() {
     // we're connected!
     debug('CONNECTED TO DB!');
+    console.log('CONNECTED TO DB!:', process.env.MONGO_URI);
   });
 
 
@@ -98,7 +101,7 @@ module.exports = function(config) {
     history: {
       addToHistory: function(message, user) {
         return new Promise(function(resolve, reject) {
-          var hist = new history({userId: user, message: message});
+          var hist = new history({userId: user.id, message: message});
           hist.save(function(err) {
             if (err) { return reject(err) }
             resolve(hist);
@@ -107,7 +110,7 @@ module.exports = function(config) {
       },
       getHistoryForUser: function(user, limit) {
         return new Promise(function(resolve, reject) {
-          history.find({userId: user}).sort({date: -1}).limit(limit).exec(function(err, history) {
+          history.find({userId: user.id}).sort({date: -1}).limit(limit).exec(function(err, history) {
             if (err) {  return reject(err) }
             resolve(history.reverse());
           });

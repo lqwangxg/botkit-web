@@ -2,7 +2,7 @@
 const utils = require("../service/utils");
 module.exports = function(controller) {
 
-  controller.hears('iot', 'message_received', function(bot, message) {
+  controller.hears(/^iot関連$/, 'message_received', function(bot, message) {
 
     bot.startConversation(message, function(err, convo) {
               //console.log(`convo:${JSON.stringify(convo)}`);
@@ -25,7 +25,7 @@ module.exports = function(controller) {
       },
       [
         {
-          pattern: 'iot案例資料',
+          pattern: /^iot案例資料$/i,
           callback: function(res, convo) {
             convo.gotoThread('docs');
             convo.next();
