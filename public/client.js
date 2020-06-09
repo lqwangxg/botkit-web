@@ -14,6 +14,7 @@
       reconnect_count: 0,
       guid: null,
       current_user: null,
+      
       on: function(event, handler) {
         this.message_window.addEventListener(event, function(evt) {
           handler(evt.detail);
@@ -308,19 +309,14 @@
         });
       },
       identifyUser: function(user) {
-
         user.timezone_offset = new Date().getTimezoneOffset();
-
-        this.guid = user.id;
-        Botkit.setCookie('botkit_guid', user.id, 1);
-
-        this.current_user = user;
-
+        //this.guid = user.id;
+        //Botkit.setCookie('botkit_guid', user.id, 1);
+        //this.current_user = user;
         this.deliverMessage({
           type: 'identify',
-          user: this.guid,
-          channel: 'socket',
-          user_profile: user,
+          user: user,
+          channel: 'socket'
         });
       },
       receiveCommand: function(event) {

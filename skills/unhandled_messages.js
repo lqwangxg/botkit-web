@@ -4,11 +4,6 @@ const debug = require('debug')('botkit:handle');
 
 module.exports = function(controller) {
 
-  controller.on('conversationStarted', function(bot, convo) {
-    var username = convo.context.user.name ? convo.context.user.name : convo.context.user.id;
-    console.log(`A conversation started with ${username}.`);
-  });
-
   controller.on('message_received', function(bot, message) {
     
     //let intentResponse;

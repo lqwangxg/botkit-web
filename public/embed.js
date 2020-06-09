@@ -80,9 +80,6 @@ var Botkit = {
 
     // user should contain any of the following:
     // id, email, name, first_name, last_name, full_name, gender, timezone, timezone_offset
-
-    this.current_user = user;
-
     this.trigger({
       type: 'event',
       name: 'identify',
