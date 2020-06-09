@@ -23,7 +23,7 @@ var Botkit = require('botkit');
 
 var bot_options = {
     replyWithTyping: true,
-    debug:process.env.DEBUG
+    //debug:process.env.DEBUG
 };
 
 // Use a mongo database if specified, otherwise store in a JSON file local to the app.
@@ -53,7 +53,8 @@ require(__dirname + '/components/plugin_admin.js')(controller);
 
 // Open the web socket server
 controller.openSocketServer(controller.httpserver);
-
+// クライアント配列
+controller.botClients = [];
 
 // Start the bot brain in motion!!
 controller.startTicking();
