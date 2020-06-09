@@ -3,14 +3,14 @@ const IntentService = require("../service/intent");
 
 module.exports = function(controller) {
 
-  controller.on('message_received', function(bot, message) {
-    
-    //let intentResponse;
-    IntentService.detectTextIntent([message.text],(intentResponse)=>{
-      console.log(`message===before======:${JSON.stringify(message)}`);
-      Object.assign(message, intentResponse);
-      console.log(`message===after======:${JSON.stringify(message)}`);
+  //
+  controller.on('USR_MSG', function(bot, message) {
 
+    console.log(`message==before detectTextIntent====`, message);
+    
+    IntentService.detectTextIntent([message.text], (ret)=>{
+      Object.assign(message, ret);
+      
       const action = utils.getAction(message);
       const fulfillmentText = utils.getfulfillmentText(message);
       if(action){
@@ -20,11 +20,6 @@ module.exports = function(controller) {
           controller.trigger(handler.name, [bot, message]);
           return;
         }
-        
-        controller.handlers.forEach(a=>{
-          console.log(`item:${a}`);
-        });
-
       }else if(fulfillmentText){
         bot.reply(message, {
           text: fulfillmentText,

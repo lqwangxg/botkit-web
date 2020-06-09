@@ -26,9 +26,9 @@ module.exports = function(controller) {
       }
 
       user.name = message.user_profile.name;
-      for (var key in message.user) {
+      for (var key in message.user_profile) {
         if (key != 'name' && key != 'id') {
-          user.attributes[key] = message.user[key];
+          user.attributes[key] = message.user_profile[key];
         }
       }
 

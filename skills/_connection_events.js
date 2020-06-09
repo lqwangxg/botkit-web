@@ -17,7 +17,8 @@ module.exports = function(controller) {
     
     bot.startConversation(message, function(err, convo) {
       convo.say(`message.type:${message.type}, from ${message.user},  text:${message.text}`);
-      convo.addMessage(message, message.user);
+      //convo.addMessage(message, message.user);
+      
     });
     
   });
@@ -26,8 +27,10 @@ module.exports = function(controller) {
     
     bot.startConversation(message, function(err, convo) {
       convo.say(`message.type:${message.type}, from ${message.user},  text:${message.text}`);
-      convo.addMessage(message, message.user);      
-      controller.trigger("MMC_MSG", [bot, message]);
+      //convo.addMessage(message, message.user);
+      message.to = "admin";
+      convo.transitionTo("admin",  message);
+
     });
 
   });
@@ -36,7 +39,7 @@ module.exports = function(controller) {
   
   function onboarding(bot, message) {
     console.log(`onboarding :${message.type}, ${message.user} `);
-
+    
     bot.startConversation(message, function(err, convo) {
       const header='こんにちは、MBP Smartec ロボです。 ';
       
@@ -44,6 +47,11 @@ module.exports = function(controller) {
         convo.say({text:'Admin Management Center is online...'})
       }else{
         utils.helpDesk(convo, header);
+        message.to = "admin";
+        bot.startTask(bot, message, (task, new_convo)=>{
+          new_convo.say("good, I am a call back");
+          console.log("task",task,"new_convo", new_convo);
+        });
       }
     });
   }

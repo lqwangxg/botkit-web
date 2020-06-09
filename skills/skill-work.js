@@ -76,6 +76,7 @@ module.exports = function(controller) {
     });
     
   });
+  
   controller.hears(['会社案内','電話番号','所在地','アクセス'], 'USR_MSG', function(bot, message) {
     bot.startConversation(message, function(err, convo) {
       // set up community thread

@@ -6,9 +6,11 @@ const intent = require("../service/intent");
 
 module.exports = function(controller) {
  
-  controller.middleware.receive.use(function(bot, message, next) {
-    
-      next();
+  controller.middleware.send.use(function(bot, message, next) {
+    if(message.platform){
+      console.log("platform:" + message.platform, message.text);
+    }
+    next();
   });
 
 }
