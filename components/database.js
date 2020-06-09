@@ -2,10 +2,8 @@ require("dotenv").config();
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var ObjectId = mongoose.Schema.Types.ObjectId;
-var debug = require('debug')('botkit:db');
-module.exports = function(config) {
 
-  console.log('process.env.MONGO_URI:', process.env.MONGO_URI);
+module.exports = function(config) {
 
   mongoose.connect(process.env.MONGO_URI, {
     useUnifiedTopology: true
@@ -17,7 +15,6 @@ module.exports = function(config) {
   db.on('error', console.error.bind(console, 'connection error:'));
   db.once('open', function() {
     // we're connected!
-    debug('CONNECTED TO DB!');
     console.log('CONNECTED TO DB!:', process.env.MONGO_URI);
   });
 

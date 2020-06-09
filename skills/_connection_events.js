@@ -2,10 +2,9 @@
 const utils = require("../service/utils");
 module.exports = function(controller) {
   
-  //初回接続、再度接続、途中helpの場合、ヘルプディスクへ
+  //初回接続、再度接続、途中helpの場合、ヘルプディスクへmessage_received
   controller.on('hello', onboarding);
   controller.on('welcome_back', onboarding);
-  controller.hears(['help','ヘルプ'], 'USR_MSG', onboarding);
   
   controller.on('conversationStarted', function(bot, convo) {
     console.log(`A conversation started with ${convo.context.user}.`);
@@ -33,7 +32,8 @@ module.exports = function(controller) {
 
   });
   
-
+  controller.hears(['help','ヘルプ'], 'USR_MSG', onboarding);
+  
   function onboarding(bot, message) {
     console.log(`onboarding :${message.type}, ${message.user} `);
 

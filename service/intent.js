@@ -1,6 +1,5 @@
 'use strict';
 const uuid = require("uuid");
-const debug = require('debug')('botkit:intent');
 
 module.exports = class IntentService {
   static detectTextIntent(queries, resolve) {
@@ -48,7 +47,7 @@ module.exports = class IntentService {
       let intentResponse;
       for (const query of queries) {
         try {
-          debug(`Sending query Text: ${query}`);
+          
           intentResponse = await detectIntent(
             projectId,
             sessionId,
@@ -56,8 +55,7 @@ module.exports = class IntentService {
             context,
             languageCode
           );
-          debug('Detected intent Fulfillment Text:');
-          debug(`${intentResponse.queryResult.intent.displayName}`);
+          
           // Use the context from this response for next queries
           context = intentResponse.queryResult.outputContexts;
         } catch (error) {

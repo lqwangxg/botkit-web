@@ -20,7 +20,6 @@ env(__dirname + '/.env');
 
 
 var Botkit = require('botkit');
-var debug = require('debug')('botkit:main');
 
 var bot_options = {
     replyWithTyping: true,
@@ -64,7 +63,6 @@ var handlerPath = require("path").join(__dirname, "handler");
 require("fs").readdirSync(handlerPath).forEach(function(file) {
   const module = require("./handler/" + file);
   controller.handlers.push({name: file.replace(/\.\w+$/gi,''), module: module});
-  debug(`action:${file}, module:${module}`);
 });
 
 var normalizedPath = require("path").join(__dirname, "skills");

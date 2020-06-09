@@ -1,6 +1,5 @@
 const utils = require("../service/utils");
 const IntentService = require("../service/intent");
-const debug = require('debug')('botkit:handle');
 
 module.exports = function(controller) {
 
