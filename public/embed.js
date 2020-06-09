@@ -95,10 +95,7 @@ var Botkit = {
     that.header = document.getElementById('messenger_header');
     that.chatClient = document.getElementById('botkit_client').contentWindow;
 
-    if (user) {
-      that.current_user = user;
-    }
-    console.log(`boot current_user:${that.current_user}`);
+    console.log(`boot current_user:`, user);
 
     if (!that.chatClient) {
       console.error('Cannot find Botkit chat client iframe. Make sure your iframe has the id #botkit_client');

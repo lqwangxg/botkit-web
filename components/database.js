@@ -101,7 +101,7 @@ module.exports = function(config) {
     history: {
       addToHistory: function(message, user) {
         return new Promise(function(resolve, reject) {
-          var hist = new history({userId: user.id, message: message});
+          var hist = new history({userId: user, message: message});
           hist.save(function(err) {
             if (err) { return reject(err) }
             resolve(hist);
@@ -110,7 +110,7 @@ module.exports = function(config) {
       },
       getHistoryForUser: function(user, limit) {
         return new Promise(function(resolve, reject) {
-          history.find({userId: user.id}).sort({date: -1}).limit(limit).exec(function(err, history) {
+          history.find({userId: user}).sort({date: -1}).limit(limit).exec(function(err, history) {
             if (err) {  return reject(err) }
             resolve(history.reverse());
           });

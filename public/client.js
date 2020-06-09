@@ -63,11 +63,11 @@
         }
         console.log(`send text: ${text}`);
         //送信者は誰？
-        console.log(`送信者：`,that.current_user);
+        console.log(`送信者：`,that.current_user.id);
 
         var message = {
           type: 'outgoing', //右寄せ表示, default　incoming左寄せ
-          user: that.current_user,
+          user: that.current_user.id,
           text: text,
         };
         
@@ -78,8 +78,9 @@
         var message_s={
           type: 'message',
           text: text,
-          user: that.current_user,
-          channel: this.options.use_sockets ? 'socket' : 'webhook'
+          user: that.current_user.id,
+          user_profile:  that.current_user,
+          channel: this.options.use_sockets ? {type:'socket', id: that.current_user.id } : {type:'webhook', id: that.current_user.id }
         }
         console.log(`Serverへ送信内容：`, message_s);
         // send to chat server.
@@ -102,7 +103,7 @@
         var that = this;
         if (that.current_user) {
           that.request('/botkit/history', {
-            user: that.current_user
+            user: that.current_user.id
           }).then(function(history) {
             if (history.success) {
               that.trigger('history_loaded', history.history);
@@ -124,31 +125,22 @@
         });
 
       },
-      connect: function(user) {
-        console.log('connect user:', user);
+      connect: function(userid) {
+        console.log('connect user:', userid);
         var that = this;
-        if (!user) {
-          user = {
-            id: Math.random().toString().substr(2,10)
-          }
-        }
-        user.timezone_offset = new Date().getTimezoneOffset();
-        that.current_user = user;
-
-        console.log('connect usertypeof:', typeof user);
-        if(user.id){
-          userid = user.id;
-        }else if(typeof user === "string"){
-          console.log('connect usertypeof:', typeof user);
-          user.id = user;
-        }else{
-          user.id = Math.random().toString().substr(2,10)
+        if (!userid) {
+          userid = Math.random().toString().substr(2,10);
         }
         
-        const cookieID = 'botkit_userid_'+ user.id;
-        Botkit.setCookie(cookieID, user.id, 1);
+        const cookieID = 'botkit_userid_'+ userid;
+        Botkit.setCookie(cookieID, userid, 1);
+        that.current_user = {
+          id:userid,
+          timezone_offset: new Date().getTimezoneOffset()
+        };
         console.log('connect cookieid:', cookieID);
-        console.log('CONNECT WITH USER:', user);
+        console.log('CONNECT WITH USER:', userid);
+        
         // connect to the chat server!
         if (that.options.use_sockets) {
           that.connectWebsocket(that.config.ws_url);
@@ -173,8 +165,8 @@
         that.trigger('connected', {});
         that.webhook({
           type: connectEvent,
-          user: that.current_user,
-          channel: 'webhook',
+          user: that.current_user.id,
+          channel:{type:'webhook', id: that.current_user.id } 
         });
 
       },
@@ -209,8 +201,9 @@
           that.trigger('connected', event);
           that.deliverMessage({
             type: connectEvent,
-            user: that.current_user,
-            channel: 'socket'
+            user: that.current_user.id,
+            user_profile: that.current_user,
+            channel:{type:'socket', id: that.current_user.id } 
           });
         });
         console.log('connectWebsocket user_profile:', that.current_user);
@@ -265,19 +258,12 @@
           var messageIntent ;
           var username;
           if(message.user){
-            if(message.user.name ){
-              username = message.user.name;
-            }else if(message.user.id ){
-              username = message.user.id;
-            }
-            else{
-              username = message.user;
-            }
+            username = message.user;
           }else
           {
             username = "匿名客-999";
           }
-          const options = { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric' };
+          //const options = { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric' };
           const nowDate = new Date();
           const nowString = nowDate.toLocaleDateString() + " " + nowDate.toLocaleTimeString();
 
@@ -303,20 +289,19 @@
         this.deliverMessage({
           type: 'trigger',
           user: this.guid,
-          channel: 'socket',
           script: script,
-          thread: thread
+          thread: thread,
+          channel:{type:'socket', id: this.guid } 
         });
       },
       identifyUser: function(user) {
         user.timezone_offset = new Date().getTimezoneOffset();
-        //this.guid = user.id;
-        //Botkit.setCookie('botkit_guid', user.id, 1);
-        //this.current_user = user;
+        
         this.deliverMessage({
           type: 'identify',
           user: user,
-          channel: 'socket'
+          user_profile: {id: user},
+          channel:{type:'socket', id: user } 
         });
       },
       receiveCommand: function(event) {
@@ -541,14 +526,12 @@
       if(roles && roles.length >0 ){
         var role = roles[0].content;
         user = {
-          id: role,
-          name: role,
-          role: role
+          id: role
         }
         console.log('role:', role);
       }
       
       // your page initialization code here
       // the DOM will be available here
-      Botkit.boot(user);
+      Botkit.boot(user.id);
     })();

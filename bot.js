@@ -24,6 +24,7 @@ var debug = require('debug')('botkit:main');
 
 var bot_options = {
     replyWithTyping: true,
+    debug:process.env.DEBUG
 };
 
 // Use a mongo database if specified, otherwise store in a JSON file local to the app.
@@ -48,8 +49,12 @@ require(__dirname + '/components/plugin_glitch.js')(controller);
 // Load in a plugin that defines the bot's identity
 require(__dirname + '/components/plugin_identity.js')(controller);
 
+// Load in a plugin that defines the bot's from admin or user
+require(__dirname + '/components/plugin_admin.js')(controller);
+
 // Open the web socket server
 controller.openSocketServer(controller.httpserver);
+
 
 // Start the bot brain in motion!!
 controller.startTicking();
