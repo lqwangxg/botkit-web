@@ -254,14 +254,19 @@
           that.next_line = document.createElement('div');
           that.message_list.appendChild(that.next_line);
         }
+        //console.log("message:", message);
         if (message.text) {
           var messageIntent ;
           var username;
           if(message.user){
             username = message.user;
-          }else
-          {
-            username = "匿名客-999";
+            if(message.to && message.user != message.to){
+              message.transfer = true;
+              username = "["+ message.user + " -> "+ message.to +"]"
+            }else if(message.from && message.user != message.from){
+              message.transfer = true;
+              username = "["+ message.from + " -> "+ message.user +"]"
+            }
           }
           //const options = { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric' };
           const nowDate = new Date();
@@ -270,13 +275,15 @@
           if(message.text){
             if(message.type==="outgoing"){
               messageIntent = "<div class='guest'>"+ nowString+ " " + username + ":</div>";
+            }else if(message.transfer){
+              messageIntent = "<div class='transfer'>"+ nowString+ " " + username + ":</div>";
             }else{
               messageIntent = "<p class='chatbot'>" + nowString + " ChatBot:</p>";
             }
           }
           message.html = messageIntent + converter.makeHtml(message.text);
         }
-        console.log('html:', message.html);
+        //console.log('html:', message.html);
 
         that.next_line.innerHTML = that.message_template({
           message: message
@@ -426,7 +433,7 @@
         });
 
         that.on('message', function(message) {
-
+          console.log("message from server:", message);
           that.renderMessage(message);
 
         });

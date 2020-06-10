@@ -29,8 +29,9 @@ module.exports = function(controller) {
       const header='こんにちは、MBP Smartec ロボです。 ';
       
       if(message.user.match(/admin/i)){
-        message.text = 'Admin Management Center is online...';
-        convo.say(message);
+        //message.text = 'Admin Management Center is online...';
+        //message.typingDelay=1000;
+        convo.say('Admin Management Center is online...');
       }else{
         utils.helpDesk(convo, header);
       }
