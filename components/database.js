@@ -98,6 +98,8 @@ module.exports = function(config) {
     history: {
       addToHistory: function(message, user) {
         return new Promise(function(resolve, reject) {
+          const nowDate = new Date();
+          message.stime = nowDate.toLocaleDateString() + " " + nowDate.toLocaleTimeString();
           var hist = new history({userId: user, message: message});
           hist.save(function(err) {
             if (err) { return reject(err) }

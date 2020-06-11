@@ -13,7 +13,7 @@ module.exports = function(controller) {
     console.log(`A conversation end with ${convo.context.user}.`);
   });
   
-  controller.hears(['help','ヘルプ'], 'USR_MSG', onboarding);
+  controller.hears(['help','ヘルプ'], 'message_received', onboarding);
   
   function onboarding(bot, message) {
     console.log(`onboarding :${message.type}, ${message.user} `);
@@ -31,7 +31,7 @@ module.exports = function(controller) {
       if(message.user.match(/admin/i)){
         //message.text = 'Admin Management Center is online...';
         //message.typingDelay=1000;
-        convo.say('Admin Management Center is online...');
+        //convo.say('Admin Management Center is online...');
       }else{
         utils.helpDesk(convo, header);
       }

@@ -14,7 +14,9 @@
       reconnect_count: 0,
       guid: null,
       current_user: null,
-      
+      askHuman: false,
+      callbackUser: null,
+
       on: function(event, handler) {
         this.message_window.addEventListener(event, function(evt) {
           handler(evt.detail);
@@ -69,6 +71,9 @@
           type: 'outgoing', //右寄せ表示, default　incoming左寄せ
           user: that.current_user.id,
           text: text,
+          askHuman: that.askHuman,
+          answerUser: that.answerUser,
+          callbackUser: that.callbackUser
         };
         
         this.clearReplies();
@@ -80,8 +85,12 @@
           text: text,
           user: that.current_user.id,
           user_profile:  that.current_user,
+          askHuman: that.askHuman,
+          answerUser: that.answerUser,
+          callbackUser: that.callbackUser,
           channel: this.options.use_sockets ? {type:'socket', id: that.current_user.id } : {type:'webhook', id: that.current_user.id }
         }
+        
         console.log(`Serverへ送信内容：`, message_s);
         // send to chat server.
         that.deliverMessage(message_s);
@@ -97,7 +106,7 @@
         } else {
           this.webhook(message);
         }
-        console.log(`deliverMessage`, message);
+        //console.log(`deliverMessage`, message);console.log(`deliverMessage`, message);
       },
       getHistory: function() {
         var that = this;
@@ -258,28 +267,34 @@
         if (message.text) {
           var messageIntent ;
           var username;
+          var className;
           if(message.user){
-            username = message.user;
-            if(message.to && message.user != message.to){
-              message.transfer = true;
+            className = "guest";
+            if(message.isSend){
+              username = "ChatBot";
+            }else{
+              username = message.user;
+            }
+
+            if(message.answerUser){
+              username = message.user;
+              className = "human-user"
+
+            }else if(message.to && message.user != message.to){
+              className = "chatbot-user"
               username = "["+ message.user + " -> "+ message.to +"]"
             }else if(message.from && message.user != message.from){
-              message.transfer = true;
+              className = "user-chatbot"
               username = "["+ message.from + " -> "+ message.user +"]"
             }
+            
           }
           //const options = { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric' };
           const nowDate = new Date();
           const nowString = nowDate.toLocaleDateString() + " " + nowDate.toLocaleTimeString();
 
           if(message.text){
-            if(message.type==="outgoing"){
-              messageIntent = "<div class='guest'>"+ nowString+ " " + username + ":</div>";
-            }else if(message.transfer){
-              messageIntent = "<div class='transfer'>"+ nowString+ " " + username + ":</div>";
-            }else{
-              messageIntent = "<p class='chatbot'>" + nowString + " ChatBot:</p>";
-            }
+            messageIntent = "<div class='"+className+"'>"+ nowString+ " " + username + ":</div>";
           }
           message.html = messageIntent + converter.makeHtml(message.text);
         }
@@ -434,6 +449,16 @@
 
         that.on('message', function(message) {
           console.log("message from server:", message);
+          that.askHuman = !!message.askHuman;
+          that.answerUser = !!message.answerUser;
+          that.callbackUser = null;
+          if(message.text.match(/(bye|quit|exit)/i)){
+            that.answerUser = false;
+            that.askHuman = false;
+          }else if(message.askHuman){
+            that.callbackUser = message.callbackUser;
+            that.answerUser = true;
+          }
           that.renderMessage(message);
 
         });
@@ -491,12 +516,13 @@
           }
         });
 
-        that.on('history_loaded', function(history) {
+        that.on('history_loaded', function(historyMessage) {
           if (history) {
-            for (var m = 0; m < history.length; m++) {
+            for (var m = 0; m < historyMessage.length; m++) {
               that.renderMessage({
-                text: history[m].text,
-                type: history[m].type == 'message_received' ? 'outgoing' : 'incoming', // set appropriate CSS class
+                text: historyMessage[m].text,
+                stime: historyMessage[m].stime,
+                type: historyMessage[m].type == 'message_received' ? 'outgoing' : 'incoming', // set appropriate CSS class
               });
             }
           }

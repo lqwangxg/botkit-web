@@ -293,8 +293,19 @@ a.button {
   font-size: 12px;
   font-weight: bolder;
 }
-.transfer{
+.chatbot-user{
+  color: goldenrod;
+  font-size: 12px;
+  font-weight: bolder;
+}
+.user-chatbot{
   color: yellowgreen;
+  font-size: 12px;
+  font-weight: bolder;
+}
+.human-user{
+  color: yellowgreen;
+  background-color: indigo;
   font-size: 12px;
   font-weight: bolder;
 }

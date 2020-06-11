@@ -2,7 +2,7 @@
 const utils = require("../service/utils");
 module.exports = function(controller) {
 
-  controller.hears(/^iot関連$/, 'USR_MSG', function(bot, message) {
+  controller.hears(/^iot関連$/, 'message_received', function(bot, message) {
 
     bot.startConversation(message, function(err, convo) {
               //console.log(`convo:${JSON.stringify(convo)}`);
@@ -77,7 +77,7 @@ module.exports = function(controller) {
     
   });
   
-  controller.hears(['会社案内','電話番号','所在地','アクセス'], 'USR_MSG', function(bot, message) {
+  controller.hears(['会社案内','電話番号','所在地','アクセス'], 'message_received', function(bot, message) {
     bot.startConversation(message, function(err, convo) {
       // set up community thread
       convo.say({
@@ -86,7 +86,7 @@ module.exports = function(controller) {
       utils.helpDesk(convo);
     });
   });
-  controller.hears('事業内容', 'USR_MSG', function(bot, message) {
+  controller.hears('事業内容', 'message_received', function(bot, message) {
     bot.startConversation(message, function(err, convo) {
       // set up community thread
       convo.say({
@@ -95,7 +95,7 @@ module.exports = function(controller) {
       utils.helpDesk(convo);
     });
   });
-  controller.hears('最新ニュース', 'USR_MSG', function(bot, message) {
+  controller.hears('最新ニュース', 'message_received', function(bot, message) {
     bot.startConversation(message, function(err, convo) {
       // set up community thread
       convo.say({
@@ -104,7 +104,8 @@ module.exports = function(controller) {
       utils.helpDesk(convo);
     });
   });
-  controller.hears('ログイン', 'USR_MSG', function(bot, message) {
+
+  controller.hears('ログイン', 'message_received', function(bot, message) {
     bot.startConversation(message, function(err, convo) {
       convo.ask({
         text: '会員様、一般社員を選び頂きます。',
@@ -140,43 +141,42 @@ module.exports = function(controller) {
             convo.next();
           }
         }
-      ]);
+      ], {key: 'loginType'});
 
-      // set up docs threads
-      convo.addMessage({
+      const callBackAskID=[
+        {
+          pattern : /^S\w+/,
+          callback: (message, convo) => {
+            convo.say(`ようこそ、いらっしゃいません。${message.text}様！`)
+            convo.next();
+          }
+        },
+        {
+          pattern : /^M\w+/,
+          callback: (message, convo) => {
+            convo.say(`こんにちは、${message.text}様！`)
+            convo.next();
+          }
+        },
+        {
+          default:true,
+          callback: (message, convo) => {
+            convo.next();
+          }
+        }
+      ];
+
+      // set up member threads
+      convo.addQuestion({
         text: '会員様IDを入力してください。',
-      },['member']);
-      // set up docs threads
-      convo.addMessage({
+      }, callBackAskID, {key: 'name'}, "member");
+      
+      // set up staff threads
+      convo.addQuestion({
         text: '社員IDを入力してください。',
-      },['staff']);
-      // set up docs threads
-      convo.addMessage({
-        text: 'アドミンIDを入力してください。',
-      },['admin']);
-      
+      }, callBackAskID, {key: 'name'}, "staff");
+    
     });
   });
 
-  controller.hears(new RegExp(/^MI[\w]{3,}/gi), 'USR_MSG', function(bot, message) {
-    bot.startConversation(message, function(err, convo) {
-      let memberid = 'MM0001'
-      convo.say(`会員様${memberid},ようこそ、いらっしゃいません。`);
-
-    });
-  });
-  controller.hears(new RegExp(/^ST[\w]{3,}/gi), 'USR_MSG', function(bot, message) {
-    bot.startConversation(message, function(err, convo) {
-      let memberid = 'ST0001'
-      convo.say(`こんにちは、${memberid}様`);
-      
-    });
-  });
-  controller.hears(new RegExp(/^AD[\w]{3,}/gi), 'MMC_MSG', function(bot, message) {
-    bot.startConversation(message, function(err, convo) {
-      let memberid = 'ADM0001'
-      convo.say(`${memberid}様、現時点、異常が見つかりません。`);
-      
-    });
-  });
 }
